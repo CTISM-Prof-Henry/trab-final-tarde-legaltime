@@ -6,5 +6,5 @@ Software baseado em web de página singular que permite o gerenciamento da aloca
 <li>Visualização global e individual da disponibilidade de salas por horário;<br>
 <li>Sistema de prioridade por departamento;<br>
 <li>Listagem de salas com informações;<br>
-<li>Seleção e adição de usuário.<br>
+<li>Seleção e adição de usuário;<br>
 <li>Cadastro e remoção de salas.
