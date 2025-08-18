@@ -4,7 +4,7 @@ Software baseado em web de página singular que permite o gerenciamento da aloca
 
 ## Recursos Básicos
 <li>Visualização global e individual da disponibilidade de salas por horário;<br>
-<li>Sistema de prioridade por departamento: e.g. sala X prioritária para dept. de Matemática;<br>
-<li>Listagem de salas com informações (capacidade, dept. de prioridade, nº de agendamentos vinculados);<br>
-<li>Seleção e adição de usuário. (Admin [alterações globais], usr_k [alterações sobre agendamentos próprios].)<br>
+<li>Sistema de prioridade por departamento;<br>
+<li>Listagem de salas com informações;<br>
+<li>Seleção e adição de usuário.<br>
 <li>Cadastro e remoção de salas.
