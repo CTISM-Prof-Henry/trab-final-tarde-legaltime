@@ -1,26 +1,31 @@
 <!DOCTYPE html>
-<html lang="pt_BR" xmlns="http://www.w3.org/1999/html">
+<html lang="pt-br">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Página Inicial</title>
-    <link rel="stylesheet" href="../css/style.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EncontraSala</title>
+    <link rel="stylesheet" href="../css/styles.css">
 </head>
 <body>
-<h1>Página inicial</h1>
-
-<p>Uma pizza pra você!</p>
-
-<img src="../images/pizza.jpg" alt="foto de uma pizza"/>
-
-<br/>
-
-<button id="button_click">Clique aqui</button>
-
+    <div id="toolbar">
+        
+    </div>
+    <div id="main-container">
+        <div id="table-actions-container">
+            <div id="cell-actions">
+                <button class="table-act-button">+</button>
+                <button class="table-act-button">-</button>
+                <button class="table-act-button">Edit</button>
+                <button class="table-act-button">Info</button>
+            </div>
+            <div id="general-opts">
+                <button class="table-act-button">User (supposed to be dropdown)</button>
+                <button class="table-act-button">Reset</button>
+            </div>
+        </div>
+        <div id="table-container">
+        
+        </div>
+    </div>
 </body>
-<script src="../js/script.js"></script>
-<script type="text/javascript">
-    document.getElementById("button_click").addEventListener('click', funcao_clique);
-</script>
-
 </html>
