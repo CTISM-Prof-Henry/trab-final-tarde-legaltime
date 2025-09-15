@@ -128,7 +128,7 @@ class sysManager {
     bookReset()
     addToExisting(type:[User, Classroom, Booking], requestingUser:User, targetID:String)
     deleteExisting(type:[User, Classroom, Booking], requestingUser:User, targetID:String)
-    editExisting(type:[User, Classroom, Booking], requestingUser:User, targetID:String)
+    editExisting(type:[User, Classroom, Booking], requestingUser:User, targetID:String, newArgs:Array)
 }
 
 
@@ -183,7 +183,7 @@ class sysManager {
     bookReset()
     addToExisting(type:[User, Classroom, Booking], requestingUser:User, targetID:String)
     deleteExisting(type:[User, Classroom, Booking], requestingUser:User, targetID:String)
-    editExisting(type:[User, Classroom, Booking], requestingUser:User, targetID:String)
+    editExisting(type:[User, Classroom, Booking], requestingUser:User, targetID:String, newArgs:Array)
 }
 
 
