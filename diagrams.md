@@ -126,11 +126,14 @@ class sysManager {
     existingUsers: Array
     existingClassrooms: Array
     bookReset()
+    addToExisting(type:[User, Classroom, Booking], requestingUser:User, targetID:String)
+    deleteExisting(type:[User, Classroom, Booking], requestingUser:User, targetID:String)
+    editExisting(type:[User, Classroom, Booking], requestingUser:User, targetID:String)
 }
 
 
 sysManager -- Classroom
-
+sysManager -- Booking
 sysManager -- User
 User <|--"extends" Admin
 User -- Classroom
@@ -178,11 +181,14 @@ class sysManager {
     existingUsers: Array
     existingClassrooms: Array
     bookReset()
+    addToExisting(type:[User, Classroom, Booking], requestingUser:User, targetID:String)
+    deleteExisting(type:[User, Classroom, Booking], requestingUser:User, targetID:String)
+    editExisting(type:[User, Classroom, Booking], requestingUser:User, targetID:String)
 }
 
 
 sysManager -- Classroom
-
+sysManager -- Booking
 sysManager -- User
 User <|--"extends" Admin
 User -- Classroom
