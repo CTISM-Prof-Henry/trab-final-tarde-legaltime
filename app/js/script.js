@@ -125,6 +125,26 @@ class SysManager {
             
         }
     }
+    
+    deleteExisting(type, requestingUser, targetID) {
+        if (type == "booking") {
+            let targetBooking = null;
+            for (let i=0;i<this.existingBookings.length;i++) {
+                if (this.existingBookings[i].data()[0][1] == targetID) {
+                    targetBooking = this.existingBookings[i];
+                }
+            }
+            if (targetBooking != null) {
+                if (requestingUser == ADMIN_ID || requestingUser == targetBooking.data()[4][1]) {
+                    let index = this.existingBookings.indexOf(targetBooking);
+                    this.existingBookings.splice(index, 1);
+                }
+                else {
+                    console.log("requesting user doesnt exist or is not allowed to remove")
+                }
+            }
+        }
+    }
 }
 
 
@@ -191,3 +211,4 @@ class Booking {
     } 
     
 }
+
