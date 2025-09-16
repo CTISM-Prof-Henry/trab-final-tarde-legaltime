@@ -143,6 +143,26 @@ class SysManager {
             }
         }
         
+        else if (type == "classroom") {
+            if (requestingUser == ADMIN_ID) { // only admin can remove classrooms
+                for (let i=0;i<this.existingClassrooms.length;i++) {
+                    if (this.existingClassrooms[i].data()[0][1] == targetID) {
+                        if (this.existingClassrooms[i].data()[3][1]) {
+                            let index = this.existingClassrooms.indexOf(this.existingClassrooms[i]);
+                            this.existingClassrooms.splice(index, 1);   
+                        }
+                        else {
+                            console.log("cannot remove classroom: there is a booking");
+                        }
+                    }
+            }
+            
+            }
+            else {
+                console.log("requestingUser not admin");
+            }
+        }
+        
         else if (type == "booking") {
             let targetBooking = null;
             for (let i=0;i<this.existingBookings.length;i++) {
