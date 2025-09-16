@@ -90,9 +90,13 @@ class SysManager {
             }
             
             let classroomExists = false;
+            let classroomUsed = true;
             for (let i=0;i<this.existingClassrooms.length;i++) {
                 if (bookingData[2][1] == this.existingClassrooms[i].data()[0][1]) {
                     classroomExists = true;
+                    if (this.existingClassrooms[i].data()[3][1]) {
+                        classroomUsed = false;
+                    }
                 }
             }
             
@@ -103,7 +107,7 @@ class SysManager {
                 }
             }
             
-            if (userIDExists && timespanExists && classroomExists) {
+            if (userIDExists && timespanExists && classroomExists && classroomUsed == false) {
                 
                 let timespanUsed = false;
                 for (let i=0;i<this.existingBookings.length;i++) {
@@ -121,6 +125,12 @@ class SysManager {
                 
                 if (bookIDUsed == false && timespanUsed == false) {
                     this.existingBookings = this.existingBookings.concat([target]);
+                    for (let i=0;i<this.existingClassrooms.length;i++) {
+                        if (bookingData[2][1] == this.existingClassrooms[i].data()[0][1]) {
+                            let modifiedClassroom = new Classroom(this.existingClassrooms[i].data()[0][1], this.existingClassrooms[i].data()[1][1], this.existingClassrooms[i].data()[2][1], false);
+                            this.existingClassrooms[i] = modifiedClassroom;
+                        }
+                    }
                 }
             }
             
@@ -174,6 +184,12 @@ class SysManager {
                 if (requestingUser == ADMIN_ID || requestingUser == targetBooking.data()[4][1]) {
                     let index = this.existingBookings.indexOf(targetBooking);
                     this.existingBookings.splice(index, 1);
+                    for (let i=0;i<this.existingClassrooms.length;i++) {
+                        if (targetBooking.data()[2][1] == this.existingClassrooms[i].data()[0][1]) {
+                            let modifiedClassroom = new Classroom(this.existingClassrooms[i].data()[0][1], this.existingClassrooms[i].data()[1][1], this.existingClassrooms[i].data()[2][1], true);
+                            this.existingClassrooms[i] = modifiedClassroom;
+                        }
+                    }
                 }
                 else {
                     console.log("requesting user doesnt exist or is not allowed to remove")
