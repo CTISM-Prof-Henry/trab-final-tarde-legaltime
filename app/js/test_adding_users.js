@@ -1,5 +1,5 @@
-sysManager = new SysManager([], [[1, 2], [4, 5]], [], [], []);
-console.log("created sysManager: ", sysManager.data()); // test timespans
+sysManager = new SysManager([], [], [], [], []);
+console.log("created sysManager: ", sysManager.data());
 
 someone1 = new User("testid1", "data", "data");
 console.log("created user:", someone1.data());
