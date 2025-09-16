@@ -1,4 +1,5 @@
 const ADMIN_ID = "#00001";
+// timespans need to be passed when creating SysManager object
 
 class SysManager {
     constructor(activeBookings, availableTimespans, existingBookings, existingUsers, existingClassrooms) {
@@ -127,7 +128,22 @@ class SysManager {
     }
     
     deleteExisting(type, requestingUser, targetID) {
-        if (type == "booking") {
+        if (type == "user") {
+            if (requestingUser == ADMIN_ID) { // only admin can remove users
+                for (let i=0;i<this.existingUsers.length;i++) {
+                    if (this.existingUsers[i].data()[0][1] == targetID) {
+                        let index = this.existingUsers.indexOf(this.existingUsers[i]);
+                        this.existingUsers.splice(index, 1);
+                    }
+            }
+            
+            }
+            else {
+                console.log("requestingUser not admin");
+            }
+        }
+        
+        else if (type == "booking") {
             let targetBooking = null;
             for (let i=0;i<this.existingBookings.length;i++) {
                 if (this.existingBookings[i].data()[0][1] == targetID) {
@@ -211,4 +227,3 @@ class Booking {
     } 
     
 }
-
