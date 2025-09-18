@@ -201,15 +201,19 @@ class SysManager {
 
 
 class User {
-    constructor(id, name, dept) {
+    constructor(id, name, dept, sysManager) {
         this.id = id;
         this.name = name;
         this.dept = dept;
+        this.sysManager = sysManager;
     }
     
     data() {
         return [...this.getData()];
-        
+    }
+    
+    remove(sysManager) {
+        this.sysManager.deleteExisting("user", ADMIN_ID, this.id);
     }
     
     *getData() {
@@ -221,15 +225,20 @@ class User {
 }
 
 class Classroom {
-    constructor(id, capacity, dept_priority, available) {
+    constructor(id, capacity, dept_priority, available, sysManager) {
         this.id = id;
         this.capacity = capacity;
         this.dept_priority = dept_priority;
         this.available = available;
+        this.sysManager = sysManager;
     }
     data() {
         return [...this.getData()];
         
+    }
+    
+    remove() {
+        this.sysManager.deleteExisting("classroom", ADMIN_ID, this.id);
     }
     
     *getData() {
@@ -242,16 +251,22 @@ class Classroom {
 }
 
 class Booking {
-    constructor(id, displayTitle, classroom, timespan, userID) {
+    constructor(id, displayTitle, classroom, timespan, userID, sysManager) {
         this.id = id;
         this.displayTitle = displayTitle;
         this.classroom = classroom;
         this.timespan = timespan;
         this.userID = userID;
+        this.sysManager = sysManager;
     }
+    
     data() {
         return [...this.getData()];
         
+    }
+    
+    remove() {
+        this.sysManager.deleteExisting("booking", ADMIN_ID, this.id);
     }
     
     *getData() {
