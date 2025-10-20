@@ -17,13 +17,20 @@ body {
 }
 
 #toolbar {
-    background: blue;
+    display: flex;
+    background: #274156;
+    align-items: center;
     width: 100%;
     height: 5%;
 }
 
+#toolbar h3 {
+    padding: 20px;
+    color: white;
+}
+
 #main-container {
-    background: black;
+    background: #FBFCFF;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -33,32 +40,44 @@ body {
 }
 
 #table-container {
-    background: white;
+    background: #E6E4E8;
     height: 80%;
     width: 80%;
 }
 
 #table-actions-container {
-    background: green;
+    background: #1C6E8C;
     display: flex;
     flex-direction: row;
     justify-content: space-between;
-    align-items: center;
+    align-items: flex-start;
     width: 80%;
     height: 7%;
 }
 
 #cell-actions {
-    padding-left: 10px;
+    display: flex;
+    height: 100%;
 }
 
 #general-opts {
-    padding-right: 10px;
+    display: flex;
+    height: 100%;
 }
 
 .table-act-button {
     padding: 5px;
-    background: darkgreen;
+    background: #274156;
     color: white;
-    border-width: 0;
+    border-width: 1px;
+    border-style: solid;
+    border-right-width: 1px;
+    border-bottom-width: 3px;
+    border-color: #274156; 
+    border-right-color: #3B5265;
+    height: 100%;
+}
+
+.table-act-button:hover {
+    border-bottom-color: green;
 }
