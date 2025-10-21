@@ -1,5 +1,7 @@
 
 const ADMIN_ID = "#00001";
+var ACTIVE_USER_ID = ADMIN_ID // application starts with admin
+
 // timespans need to be passed when creating SysManager object
 
 class SysManager {
@@ -297,6 +299,8 @@ function updateUser(actual) {
     var button = document.getElementById("user-button");
     button.innerHTML = actual.name;
 }
+
+// default data (should be modified in admin panel)
 
 timespans = [
     [7000,7290],
