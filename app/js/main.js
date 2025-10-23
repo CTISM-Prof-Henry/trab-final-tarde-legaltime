@@ -85,14 +85,14 @@ class SysManager {
                 existingClassroomsIDS = existingClassroomsIDS.concat([this.existingClassrooms[i].data()[0][1]])
             }
             
-            let timespanExists = false;
+            let timespanExists = false; // check if timespan exists
             for (let i=0;i<this.availableTimespans.length;i++) {
                 if (bookingData[3][1][0] == this.availableTimespans[i][0] && bookingData[3][1][1] == this.availableTimespans[i][1]) {
                     timespanExists = true;
                 }
             }
             
-            let classroomExists = false;
+            let classroomExists = false; // check if classroom exists and if is being used
             let classroomUsed = true;
             for (let i=0;i<this.existingClassrooms.length;i++) {
                 if (bookingData[2][1] == this.existingClassrooms[i].data()[0][1]) {
@@ -112,7 +112,7 @@ class SysManager {
             
             if (userIDExists && timespanExists && classroomExists && classroomUsed == false) {
                 
-                let timespanUsed = false;
+                let timespanUsed = false; // check if timespan is being used
                 for (let i=0;i<this.existingBookings.length;i++) {
                     if (bookingData[3][1][0] == this.existingBookings[i].data()[3][1][0] && bookingData[3][1][1] == this.existingBookings[i].data()[3][1][1]) {
                     timespanUsed = true;
@@ -300,61 +300,75 @@ function updateUser(actual) {
     button.innerHTML = actual.name;
 }
 
+function updateBookingOpts() {
+    var select = document.getElementById("classroom-book-opts");
+
+    for (let i=0;i<sysManager.data()[4][1].length;i++) {
+        select.add(new Option(sysManager.data()[4][1][i]["id"]));
+    }
+
+    var select = document.getElementById("time-book-opts");
+
+    for (let i=0;i<sysManager.data()[1][1].length;i++) {
+        select.add(new Option(sysManager.data()[1][1][i]));
+    }
+}
+
 // default data (should be modified in admin panel)
 
-timespans = [
-    [7000,7290],
-    [7300,7590],
+timespans = {
+    "7:00 - 7:30":[7000,7290],
+    "7:30 - 8:00":[7300,7590],
 
-    [8000,8290],
-    [8300,8590],
+    "8:00 - 8:30":[8000,8290],
+    "":[8300,8590],
 
-    [9000,9290],
-    [9300,9590],
+    "":[9000,9290],
+    "":[9300,9590],
 
-    [10000,10290],
-    [10300,10590],
+    "":[10000,10290],
+    "":[10300,10590],
 
-    [11000,11290],
-    [11300,11590],
+    "":[11000,11290],
+    "":[11300,11590],
 
-    [12000,12290],
-    [12300,12590],
+    "":[12000,12290],
+    "":[12300,12590],
 
-    [13000,13290],
-    [13300,13590],
+    "":[13000,13290],
+    "":[13300,13590],
 
-    [14000,14290],
-    [14300,14590],
+    "":[14000,14290],
+    "":[14300,14590],
 
-    [15000,15290],
-    [15300,15590],
+    "":[15000,15290],
+    "":[15300,15590],
 
-    [16000,16290],
-    [16300,16590],
+    "":[16000,16290],
+    "":[16300,16590],
 
-    [17000,17290],
-    [17300,17590],
+    "":[17000,17290],
+    "":[17300,17590],
 
-    [18000,18290],
-    [18300,18590],
+    "":[18000,18290],
+    "":[18300,18590],
 
-    [19000,19290],
-    [19300,19590],
+    "":[19000,19290],
+    "":[19300,19590],
 
-    [20000,20290],
-    [20300,20590],
+    "":[20000,20290],
+    "":[20300,20590],
 
-    [21000,21290],
-    [21300,21590],
+    "":[21000,21290],
+    "":[21300,21590],
 
-    [22000,22290],
-    [22300,22590],
+    "":[22000,22290],
+    "":[22300,22590],
 
-    [23000,23290],
-    [23300,23590],
+    "":[23000,23290],
+    "":[23300,23590],
 
-];
+};
 
 let sysManager = new SysManager([], timespans, [], [], []);
 console.log("created sysManager: ", sysManager.data());
@@ -374,6 +388,7 @@ sysManager.addToExisting("user", ADMIN_ID, admin);
 document.addEventListener("DOMContentLoaded", function () {
     updateTable();
     updateUser(admin);
+    updateBookingOpts();
 });
 
 
