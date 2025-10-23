@@ -179,3 +179,43 @@ header h3 {
     flex-direction: column;
     justify-content: space-between;
 }
+
+#stard-end-time-div {
+    padding-left: 20px;
+    padding-top: 10px;
+    width: 100%;
+}
+
+#stard-end-time-div p {
+    padding-bottom: 5px;
+    padding-top: 5px;
+}
+
+#input-event-title {
+    width: 100%;
+}
+
+#time-book-opts {
+    width: 30%;
+}
+
+#classroom-book-opts {
+    width: 60%;
+}
+
+form div {
+    padding-left: 20px;
+    width: 100%;
+}
+
+form div p{
+    padding-top: 5px;
+    padding-bottom: 5px;
+    width: 100%;
+}
+
+form {
+    width: 60%;
+}
+
+
