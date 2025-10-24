@@ -85,12 +85,29 @@ class SysManager {
                 existingClassroomsIDS = existingClassroomsIDS.concat([this.existingClassrooms[i].data()[0][1]])
             }
             
-            let timespanExists = false; // check if timespan exists
+            let timespanExists = false; // check if timespan exists --> updated 24/10: checks if bounds for given timespan exist  
+            var treatedOption1 = parseInt(String(bookingData[3][1][0])[0]+String(bookingData[3][1][0])[1]+String(bookingData[3][1][0])[3]);
+            var treatedOption2 = parseInt(String(bookingData[3][1][1])[0]+String(bookingData[3][1][1])[1]+String(bookingData[3][1][1])[3]);
+
+            if (treatedOption1 < 100) {
+                treatedOption1 = parseInt(String(bookingData[3][1][0])[0]+String(bookingData[3][1][0])[1]+String(bookingData[3][1][0])[3]+"0");
+            }
+
+            if (treatedOption2 < 100) {
+                treatedOption2 = parseInt(String(bookingData[3][1][1])[0]+String(bookingData[3][1][1])[1]+String(bookingData[3][1][1])[3]+"0");
+            }
+
+
             for (let i=0;i<this.availableTimespans.length;i++) {
-                if (bookingData[3][1][0] == this.availableTimespans[i][0] && bookingData[3][1][1] == this.availableTimespans[i][1]) {
-                    timespanExists = true;
+                if (treatedOption1 == this.availableTimespans[i]) {
+                    for (let x=0;x<this.availableTimespans.length;x++) {
+                        if (treatedOption2 == this.availableTimespans[x]) {
+                            timespanExists = true;
+                        }
+                    }
                 }
             }
+
             
             let classroomExists = false; // check if classroom exists and if is being used
             let classroomUsed = true;
@@ -115,7 +132,11 @@ class SysManager {
                 let timespanUsed = false; // check if timespan is being used
                 for (let i=0;i<this.existingBookings.length;i++) {
                     if (bookingData[3][1][0] == this.existingBookings[i].data()[3][1][0] && bookingData[3][1][1] == this.existingBookings[i].data()[3][1][1]) {
-                    timespanUsed = true;
+                        for (let k=0;k<this.existingBookings.length;k++) {
+                            if (bookingData[2][0] == this.existingBookings[k].data()[2][0]) { // checks to see if timespan is being used for chosen classroom
+                                timespanUsed = true;
+                            }
+                        }
                     }
                 }
                 
@@ -307,68 +328,44 @@ function updateBookingOpts() {
         select.add(new Option(sysManager.data()[4][1][i]["id"]));
     }
 
-    var select = document.getElementById("time-book-opts");
-
+    var select1 = document.getElementById("time-book-opts-start");
+    var select2 = document.getElementById("time-book-opts-end");
     for (let i=0;i<sysManager.data()[1][1].length;i++) {
-        select.add(new Option(sysManager.data()[1][1][i]));
+        var opt = sysManager.data()[1][1][i];
+        if (opt > 300) {
+            select1.add(new Option("0"+String(opt)[0]+":"+String(opt)[1]+"0"));
+            select2.add(new Option("0"+String(opt)[0]+":"+String(opt)[1]+"0"));
+        }
+
+        else {
+            select1.add(new Option(String(opt)[0]+String(opt)[1]+":"+String(opt)[2]+"0"));
+            select2.add(new Option(String(opt)[0]+String(opt)[1]+":"+String(opt)[2]+"0"));
+        }    
     }
+
 }
 
 // default data (should be modified in admin panel)
 
-timespans = {
-    "7:00 - 7:30":[7000,7290],
-    "7:30 - 8:00":[7300,7590],
-
-    "8:00 - 8:30":[8000,8290],
-    "":[8300,8590],
-
-    "":[9000,9290],
-    "":[9300,9590],
-
-    "":[10000,10290],
-    "":[10300,10590],
-
-    "":[11000,11290],
-    "":[11300,11590],
-
-    "":[12000,12290],
-    "":[12300,12590],
-
-    "":[13000,13290],
-    "":[13300,13590],
-
-    "":[14000,14290],
-    "":[14300,14590],
-
-    "":[15000,15290],
-    "":[15300,15590],
-
-    "":[16000,16290],
-    "":[16300,16590],
-
-    "":[17000,17290],
-    "":[17300,17590],
-
-    "":[18000,18290],
-    "":[18300,18590],
-
-    "":[19000,19290],
-    "":[19300,19590],
-
-    "":[20000,20290],
-    "":[20300,20590],
-
-    "":[21000,21290],
-    "":[21300,21590],
-
-    "":[22000,22290],
-    "":[22300,22590],
-
-    "":[23000,23290],
-    "":[23300,23590],
-
-};
+timespans = [
+    700, 730,
+    800, 830,
+    900, 930,
+    100, 103,
+    110, 113,
+    120, 123,
+    130, 133,
+    140, 143,
+    150, 153,
+    160, 163,
+    170, 173,
+    180, 183,
+    190, 193,
+    200, 203,
+    210, 213,
+    220, 223,
+    230, 233
+]
 
 let sysManager = new SysManager([], timespans, [], [], []);
 console.log("created sysManager: ", sysManager.data());
@@ -406,3 +403,31 @@ addBookingBtn.addEventListener("click", () => {
 addBookingClose.addEventListener("click", () => {
   addBookingDialog.close();
 });
+
+
+finishAddBooking.addEventListener("click", () => {
+    var eventTitle = document.getElementById("input-event-title").value;
+    var selectedClassroom = document.getElementById("classroom-book-opts").value;
+    var startTime = document.getElementById("time-book-opts-start").value;
+    var endTime = document.getElementById("time-book-opts-end").value;
+    var timespan = [startTime, endTime];
+    let ready = false;
+
+    if (String(eventTitle) != "" && parseInt(startTime[0]+startTime[1]) < parseInt(endTime[0]+endTime[1])) {
+        ready = true;
+        addBookingDialog.close();
+    }
+
+    else if (String(eventTitle) != "" && parseInt(startTime[0]+startTime[1]) == parseInt(endTime[0]+endTime[1])) {
+        if (parseInt(startTime[3]+startTime[4]) < parseInt(endTime[3]+endTime[4])) {
+            ready = true;
+            addBookingDialog.close();
+        }
+    }
+
+    if (ready) {
+        var thisBooking = new Booking(eventTitle, eventTitle, selectedClassroom, timespan, ADMIN_ID, sysManager);
+        sysManager.addToExisting("booking", ADMIN_ID, thisBooking);
+        console.log(sysManager.data());
+    }
+  });
