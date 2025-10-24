@@ -195,7 +195,12 @@ header h3 {
     width: 100%;
 }
 
-#time-book-opts {
+#time-book-opts-start {
+    width: 30%;
+}
+
+
+#time-book-opts-end {
     width: 30%;
 }
 
