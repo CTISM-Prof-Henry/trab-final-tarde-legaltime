@@ -90,11 +90,11 @@ class SysManager {
             var treatedOption2 = parseInt(String(bookingData[3][1][1])[0]+String(bookingData[3][1][1])[1]+String(bookingData[3][1][1])[3]);
 
             if (treatedOption1 < 100) {
-                treatedOption1 = parseInt(String(bookingData[3][1][0])[0]+String(bookingData[3][1][0])[1]+String(bookingData[3][1][0])[3]+"0");
+                treatedOption1 = parseInt(String(bookingData[3][1][0])[0]+String(bookingData[3][1][0])[1]+String(bookingData[3][1][0])[3]);
             }
 
             if (treatedOption2 < 100) {
-                treatedOption2 = parseInt(String(bookingData[3][1][1])[0]+String(bookingData[3][1][1])[1]+String(bookingData[3][1][1])[3]+"0");
+                treatedOption2 = parseInt(String(bookingData[3][1][1])[0]+String(bookingData[3][1][1])[1]+String(bookingData[3][1][1])[3]);
             }
 
 
@@ -110,12 +110,22 @@ class SysManager {
 
             
             let classroomExists = false; // check if classroom exists and if is being used
-            let classroomUsed = true;
+            let classroomUsed = false;
             for (let i=0;i<this.existingClassrooms.length;i++) {
                 if (bookingData[2][1] == this.existingClassrooms[i].data()[0][1]) {
                     classroomExists = true;
-                    if (this.existingClassrooms[i].data()[3][1]) {
-                        classroomUsed = false;
+                    var treatedGivenStart = parseInt(bookingData[3][1][0][0]+bookingData[3][1][0][1]+bookingData[3][1][0][3]);
+                    var treatedGivenEnd = parseInt(bookingData[3][1][1][0]+bookingData[3][1][1][1]+bookingData[3][1][1][3]);
+                    for (let m=0;m<this.existingClassrooms[i].data()[3][1].length;m++) {
+                        var treatedExistingStart = parseInt(this.existingClassrooms[i].data()[3][1][m][0][0]+this.existingClassrooms[i].data()[3][1][m][0][1]+this.existingClassrooms[i].data()[3][1][m][0][3]);
+                        var treatedExistingEnd = parseInt(this.existingClassrooms[i].data()[3][1][m][1][0]+this.existingClassrooms[i].data()[3][1][m][1][1]+this.existingClassrooms[i].data()[3][1][m][1][3]);
+                        if (treatedGivenStart >= treatedExistingStart && treatedGivenEnd <= treatedExistingEnd) {
+                            classroomUsed = true;
+                        }
+
+                        else if (treatedGivenStart >= treatedExistingStart && treatedGivenStart <= treatedExistingEnd) {
+                            classroomUsed = true;
+                        }
                     }
                 }
             }
@@ -126,19 +136,8 @@ class SysManager {
                     userIDExists = true;
                 }
             }
-            
+
             if (userIDExists && timespanExists && classroomExists && classroomUsed == false) {
-                
-                let timespanUsed = false; // check if timespan is being used
-                for (let i=0;i<this.existingBookings.length;i++) {
-                    if (bookingData[3][1][0] == this.existingBookings[i].data()[3][1][0] && bookingData[3][1][1] == this.existingBookings[i].data()[3][1][1]) {
-                        for (let k=0;k<this.existingBookings.length;k++) {
-                            if (bookingData[2][0] == this.existingBookings[k].data()[2][0]) { // checks to see if timespan is being used for chosen classroom
-                                timespanUsed = true;
-                            }
-                        }
-                    }
-                }
                 
                 let bookIDUsed = false;
                 for (let i=0;i<this.existingBookings.length;i++) {
@@ -147,17 +146,20 @@ class SysManager {
                     }
                 }
                 
-                if (bookIDUsed == false && timespanUsed == false) {
+                if (bookIDUsed == false) {
                     this.existingBookings = this.existingBookings.concat([target]);
                     for (let i=0;i<this.existingClassrooms.length;i++) {
                         if (bookingData[2][1] == this.existingClassrooms[i].data()[0][1]) {
-                            let modifiedClassroom = new Classroom(this.existingClassrooms[i].data()[0][1], this.existingClassrooms[i].data()[1][1], this.existingClassrooms[i].data()[2][1], false);
+                            var updatedUsageTimes = this.existingClassrooms[i].data()[3][1].concat([bookingData[3][1]]);
+                            let modifiedClassroom = new Classroom(this.existingClassrooms[i].data()[0][1], this.existingClassrooms[i].data()[1][1], this.existingClassrooms[i].data()[2][1], updatedUsageTimes, sysManager);
                             this.existingClassrooms[i] = modifiedClassroom;
+                            return 1;
                         }
                     }
                 }
             }
-            
+        
+        return 0;
         }
     }
     
@@ -249,11 +251,11 @@ class User {
 }
 
 class Classroom {
-    constructor(id, capacity, dept_priority, available, sysManager) {
+    constructor(id, capacity, dept_priority, usageTimes, sysManager) {
         this.id = id;
         this.capacity = capacity;
         this.dept_priority = dept_priority;
-        this.available = available;
+        this.usageTimes = usageTimes;
         this.sysManager = sysManager;
     }
     data() {
@@ -269,7 +271,7 @@ class Classroom {
         yield ["id", this.id];
         yield ["capacity", this.capacity];
         yield ["dept_priority", this.dept_priority];
-        yield ["available", this.available];
+        yield ["usageTimes", this.usageTimes];
     } 
     
 }
@@ -309,9 +311,9 @@ function updateTable() { // fix later: everytime this method is called, headers 
         var tr = document.getElementById("headers-row");
         tr.insertCell(1).outerHTML = "<th id=>"+sysManager.data()[4][1][i]["id"]+"</th>";
 
-        for (let a=1;a<sysManager.data()[1][1].length;a++) {
-            var trk = document.getElementsByTagName("tr")[a];
-            trk.insertCell(1).outerHTML = "<td></td>";
+        for (let a=0;a<sysManager.data()[1][1].length;a++) {
+            var trk = document.getElementsByTagName("tr")[a+1];
+            trk.insertCell(1).outerHTML = '<td id="'+String(sysManager.data()[4][1][i]["id"])+";"+sysManager.data()[1][1][a]+'"></td>';
         }
     }
 }
@@ -332,7 +334,7 @@ function updateBookingOpts() {
     var select2 = document.getElementById("time-book-opts-end");
     for (let i=0;i<sysManager.data()[1][1].length;i++) {
         var opt = sysManager.data()[1][1][i];
-        if (opt > 300) {
+        if (opt < 100) {
             select1.add(new Option("0"+String(opt)[0]+":"+String(opt)[1]+"0"));
             select2.add(new Option("0"+String(opt)[0]+":"+String(opt)[1]+"0"));
         }
@@ -348,9 +350,9 @@ function updateBookingOpts() {
 // default data (should be modified in admin panel)
 
 timespans = [
-    700, 730,
-    800, 830,
-    900, 930,
+    70, 73,
+    80, 83,
+    90, 93,
     100, 103,
     110, 113,
     120, 123,
@@ -370,13 +372,13 @@ timespans = [
 let sysManager = new SysManager([], timespans, [], [], []);
 console.log("created sysManager: ", sysManager.data());
 
-let classroom1 = new Classroom("SALA G203", 12, "math", true, sysManager);
+let classroom1 = new Classroom("SALA G203", 12, "math", [], sysManager);
 sysManager.addToExisting("classroom", ADMIN_ID, classroom1);
 
-let classroom2 = new Classroom("SALA F402", 24, "math", true, sysManager);
+let classroom2 = new Classroom("SALA F402", 24, "math", [], sysManager);
 sysManager.addToExisting("classroom", ADMIN_ID, classroom2);
 
-let classroom3 = new Classroom("SALA PROJETOR", 50, "math", true, sysManager);
+let classroom3 = new Classroom("SALA PROJETOR", 50, "math", [], sysManager);
 sysManager.addToExisting("classroom", ADMIN_ID, classroom3);
 
 let admin = new User(ADMIN_ID, "admin", "none", sysManager);
@@ -411,6 +413,7 @@ finishAddBooking.addEventListener("click", () => {
     var startTime = document.getElementById("time-book-opts-start").value;
     var endTime = document.getElementById("time-book-opts-end").value;
     var timespan = [startTime, endTime];
+    var requestedColor = document.getElementById("color-choice").value;
     let ready = false;
 
     if (String(eventTitle) != "" && parseInt(startTime[0]+startTime[1]) < parseInt(endTime[0]+endTime[1])) {
@@ -427,7 +430,21 @@ finishAddBooking.addEventListener("click", () => {
 
     if (ready) {
         var thisBooking = new Booking(eventTitle, eventTitle, selectedClassroom, timespan, ADMIN_ID, sysManager);
-        sysManager.addToExisting("booking", ADMIN_ID, thisBooking);
-        console.log(sysManager.data());
+        var success = sysManager.addToExisting("booking", ADMIN_ID, thisBooking);
+        if (success == 1) {
+            var treatedStart = parseInt(thisBooking.data()[3][1][0][0]+thisBooking.data()[3][1][0][1]+thisBooking.data()[3][1][0][3]);
+            var treatedEnd = parseInt(thisBooking.data()[3][1][1][0]+thisBooking.data()[3][1][1][1]+thisBooking.data()[3][1][1][3]);
+            var first = false;
+            for (let i=0;i<timespans.length;i++) {
+                if (timespans[i] >= treatedStart && timespans[i] <= treatedEnd) {
+                    var pertinentCell = document.getElementById(String(selectedClassroom+";"+String(timespans[i])));
+                    pertinentCell.style.background = requestedColor;
+                    if (first == false) {
+                        pertinentCell.innerHTML = String(eventTitle+" | "+startTime+" - "+endTime);
+                        first = true;
+                    }
+                }
+            }
+        }
     }
   });
