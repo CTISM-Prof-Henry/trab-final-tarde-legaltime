@@ -1,6 +1,6 @@
 
 const ADMIN_ID = "#00001";
-var ACTIVE_USER_ID = ADMIN_ID // application starts with admin
+var active_user = null // application starts with admin
 
 // timespans need to be passed when creating SysManager object
 
@@ -318,11 +318,6 @@ function updateTable() { // fix later: everytime this method is called, headers 
     }
 }
 
-function updateUser(actual) {
-    var button = document.getElementById("user-button");
-    button.innerHTML = actual.name;
-}
-
 function updateBookingOpts() {
     var select = document.getElementById("classroom-book-opts");
 
@@ -345,6 +340,21 @@ function updateBookingOpts() {
         }    
     }
 
+}
+
+function selectedUser() {
+    for (let i=0;i<sysManager.data()[3][1].length;i++) {
+        if (sysManager.data()[3][1][i]["name"] == document.getElementById("user-button").value) {
+            active_user = document.getElementById("user-button").value;
+        }
+    }
+}
+
+function addUserOpts() {
+    var select = document.getElementById("user-button");
+    for (let i=0;i<sysManager.data()[3][1].length;i++) {
+        select.add(new Option(sysManager.data()[3][1][i]["name"]));
+    }
 }
 
 // default data (should be modified in admin panel)
@@ -384,9 +394,14 @@ sysManager.addToExisting("classroom", ADMIN_ID, classroom3);
 let admin = new User(ADMIN_ID, "admin", "none", sysManager);
 sysManager.addToExisting("user", ADMIN_ID, admin);
 
+active_user = admin;
+
+let testUser = new User("test", "test", "test user", sysManager);
+sysManager.addToExisting("user", ADMIN_ID, testUser);
+
 document.addEventListener("DOMContentLoaded", function () {
+    addUserOpts();
     updateTable();
-    updateUser(admin);
     updateBookingOpts();
 });
 
@@ -397,6 +412,8 @@ const addBookingDialog = document.getElementById("add-booking-dialog");
 const addBookingBtn = document.getElementById("add-booking-btn");
 const addBookingClose = document.getElementById("add-booking-cancel-btn");
 const finishAddBooking = document.getElementById("add-booking-finish-btn");
+const userSelect = document.getElementById("user-button");
+
 
 addBookingBtn.addEventListener("click", () => {
   addBookingDialog.showModal();
