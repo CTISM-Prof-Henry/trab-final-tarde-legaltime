@@ -4,7 +4,7 @@ var active_user = null // application starts with admin
 
 // timespans need to be passed when creating SysManager object
 
-class SysManager 
+class SysManager {
     constructor(activeBookings, availableTimespans, existingBookings, existingUsers, existingClassrooms) {
         this.activeBookings = activeBookings;
         this.availableTimespans = availableTimespans;
