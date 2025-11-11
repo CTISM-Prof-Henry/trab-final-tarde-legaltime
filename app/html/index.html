@@ -49,12 +49,30 @@
                         </div>
                     </div>
                 </dialog>
-                <button class="table-act-button">Remove Bookings</button>
+                <button id="remove-booking-btn" class="table-act-button">Remove Bookings</button>
+                <dialog id="remove-booking-dialog">
+                    <div id="dialog-display-div">
+                        <div>
+                            <header>
+                                <h3>Remove Bookings</h3>
+                            </header>
+                            <div>
+                                <p id="bookings-active-user-label">Existing Bookings for </p>
+                                <select id="user-booking-opts">
+                                </select>
+                                <button id="delete-selected-booking">Delete</button>
+                            </div>
+                            <div id="button-row">
+                                <button id="remove-booking-done-btn">Done</button>
+                            </div>
+                        </div>
+                    </div>
+                </dialog>
             </div>
             <div id="general-opts">
                 <select class="table-act-button" id="user-button" onchange="selectedUser();">
                 </select>
-                <button class="table-act-button">Reset Bookings</button>
+                <button id="reset-button" class="table-act-button">Reset Bookings</button>
             </div>
         </div>
         <div id="table-container">
@@ -64,108 +82,110 @@
                         <th>Time</th>
                     </tr>
                 </thead>
-                <tr>
-                    <th>7:00</th>
-                </tr>
-                <tr>
-                    <th>7:30</th>
-                </tr>
-                <tr>
-                    <th>8:00</th>
-                </tr>
-                <tr>
-                    <th>8:30</th>
-                </tr>
-                <tr>
-                    <th>9:00</th>
-                </tr>
-                <tr>
-                    <th>9:30</th>
-                </tr>
-                <tr>
-                    <th>10:00</th>
-                </tr>
-                <tr>
-                    <th>10:30</th>
-                </tr>
-                <tr>
-                    <th>11:00</th>
-                </tr>
-                <tr>
-                    <th>11:30</th>
-                </tr>
-                <tr>
-                    <th>12:00</th>
-                </tr>
-                <tr>
-                    <th>12:30</th>
-                </tr>
-                <tr>
-                    <th>13:00</th>
-                </tr>
-                <tr>
-                    <th>13:30</th>
-                </tr>
-                <tr>
-                    <th>14:00</th>
-                </tr>
-                <tr>
-                    <th>14:30</th>
-                </tr>
-                <tr>
-                    <th>15:00</th>
-                </tr>
-                <tr>
-                    <th>15:30</th>
-                </tr>
-                <tr>
-                    <th>16:00</th>
-                </tr>
-                <tr>
-                    <th>16:30</th>
-                </tr>
-                <tr>
-                    <th>17:00</th>
-                </tr>
-                <tr>
-                    <th>17:30</th>
-                </tr>
-                <tr>
-                    <th>18:00</th>
-                </tr>
-                <tr>
-                    <th>18:30</th>
-                </tr>
-                <tr>
-                    <th>19:00</th>
-                </tr>
-                <tr>
-                    <th>19:30</th>
-                </tr>
-                <tr>
-                    <th>20:00</th>
-                </tr>
-                <tr>
-                    <th>20:30</th>
-                </tr>
-                <tr>
-                    <th>21:00</th>
-                </tr>
-                <tr>
-                    <th>21:30</th>
-                </tr>
-                <tr>
-                    <th>22:00</th>
-                </tr>
-                <tr>
-                    <th>22:30</th>
-                </tr>
-                <tr>
-                    <th>23:00</th>
-                </tr>
-                <tr>
-                    <th>23:30</th>
-                </tr>
+                <tbody id="table-body">
+                    <tr>
+                        <th>7:00</th>
+                    </tr>
+                    <tr>
+                        <th>7:30</th>
+                    </tr>
+                    <tr>
+                        <th>8:00</th>
+                    </tr>
+                    <tr>
+                        <th>8:30</th>
+                    </tr>
+                    <tr>
+                        <th>9:00</th>
+                    </tr>
+                    <tr>
+                        <th>9:30</th>
+                    </tr>
+                    <tr>
+                        <th>10:00</th>
+                    </tr>
+                    <tr>
+                        <th>10:30</th>
+                    </tr>
+                    <tr>
+                        <th>11:00</th>
+                    </tr>
+                    <tr>
+                        <th>11:30</th>
+                    </tr>
+                    <tr>
+                        <th>12:00</th>
+                    </tr>
+                    <tr>
+                        <th>12:30</th>
+                    </tr>
+                    <tr>
+                        <th>13:00</th>
+                    </tr>
+                    <tr>
+                        <th>13:30</th>
+                    </tr>
+                    <tr>
+                        <th>14:00</th>
+                    </tr>
+                    <tr>
+                        <th>14:30</th>
+                    </tr>
+                    <tr>
+                        <th>15:00</th>
+                    </tr>
+                    <tr>
+                        <th>15:30</th>
+                    </tr>
+                    <tr>
+                        <th>16:00</th>
+                    </tr>
+                    <tr>
+                        <th>16:30</th>
+                    </tr>
+                    <tr>
+                        <th>17:00</th>
+                    </tr>
+                    <tr>
+                        <th>17:30</th>
+                    </tr>
+                    <tr>
+                        <th>18:00</th>
+                    </tr>
+                    <tr>
+                        <th>18:30</th>
+                    </tr>
+                    <tr>
+                        <th>19:00</th>
+                    </tr>
+                    <tr>
+                        <th>19:30</th>
+                    </tr>
+                    <tr>
+                        <th>20:00</th>
+                    </tr>
+                    <tr>
+                        <th>20:30</th>
+                    </tr>
+                    <tr>
+                        <th>21:00</th>
+                    </tr>
+                    <tr>
+                        <th>21:30</th>
+                    </tr>
+                    <tr>
+                        <th>22:00</th>
+                    </tr>
+                    <tr>
+                        <th>22:30</th>
+                    </tr>
+                    <tr>
+                        <th>23:00</th>
+                    </tr>
+                    <tr>
+                        <th>23:30</th>
+                    </tr>
+                </tbody>
     </table>
         </div>
     </div>
