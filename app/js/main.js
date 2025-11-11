@@ -212,7 +212,13 @@ class SysManager {
                     this.existingBookings.splice(index, 1);
                     for (let i=0;i<this.existingClassrooms.length;i++) {
                         if (targetBooking.data()[2][1] == this.existingClassrooms[i].data()[0][1]) {
-                            let modifiedClassroom = new Classroom(this.existingClassrooms[i].data()[0][1], this.existingClassrooms[i].data()[1][1], this.existingClassrooms[i].data()[2][1], true);
+                            let newUsageTimes = [];
+                            for (let a=0;a<this.existingClassrooms[i].data()[3][1].length;a++) {
+                                if (this.existingClassrooms[i].data()[3][1][a][0] != targetBooking["timespan"][0] && this.existingClassrooms[i].data()[3][1][a][1] != targetBooking["timespan"][1]) {
+                                    newUsageTimes.push(this.existingClassrooms[i].data()[3][1][a]);
+                                }
+                            }
+                            let modifiedClassroom = new Classroom(this.existingClassrooms[i].data()[0][1], this.existingClassrooms[i].data()[1][1], this.existingClassrooms[i].data()[2][1], newUsageTimes, sysManager);
                             this.existingClassrooms[i] = modifiedClassroom;
                         }
                     }
@@ -277,13 +283,14 @@ class Classroom {
 }
 
 class Booking {
-    constructor(id, displayTitle, classroom, timespan, userID, sysManager) {
+    constructor(id, displayTitle, classroom, timespan, userID, sysManager, displayColor="#ffffff") {
         this.id = id;
         this.displayTitle = displayTitle;
         this.classroom = classroom;
         this.timespan = timespan;
         this.userID = userID;
         this.sysManager = sysManager;
+        this.displayColor = displayColor;
     }
     
     data() {
@@ -345,7 +352,7 @@ function updateBookingOpts() {
 function selectedUser() {
     for (let i=0;i<sysManager.data()[3][1].length;i++) {
         if (sysManager.data()[3][1][i]["name"] == document.getElementById("user-button").value) {
-            active_user = document.getElementById("user-button").value;
+            active_user = sysManager.data()[3][1][i];
         }
     }
 }
@@ -379,6 +386,8 @@ timespans = [
     230, 233
 ]
 
+let emptyTableState = document.getElementById("table").innerHTML;
+
 let sysManager = new SysManager([], timespans, [], [], []);
 console.log("created sysManager: ", sysManager.data());
 
@@ -408,11 +417,28 @@ document.addEventListener("DOMContentLoaded", function () {
 
 // interactivity
 
+document.getElementById("reset-button").addEventListener("click", () => {
+    if (active_user == admin) {
+        let temp = sysManager.data()[2][1];
+        console.log(temp);
+        for (let i=0;i<temp.length+1;i++) {
+            sysManager.deleteExisting("booking", ADMIN_ID, sysManager.data()[2][1][0]["id"]);
+        }
+
+        document.getElementById('table').innerHTML = emptyTableState;
+        updateTable();
+    }
+});
+
 const addBookingDialog = document.getElementById("add-booking-dialog");
 const addBookingBtn = document.getElementById("add-booking-btn");
 const addBookingClose = document.getElementById("add-booking-cancel-btn");
+const removeBookingDialog = document.getElementById("remove-booking-dialog");
+const removeBookingBtn = document.getElementById("remove-booking-btn");
+const removeDoneBtn = document.getElementById("remove-booking-done-btn");
 const finishAddBooking = document.getElementById("add-booking-finish-btn");
 const userSelect = document.getElementById("user-button");
+const deleteSelected = document.getElementById("delete-selected-booking");
 
 
 addBookingBtn.addEventListener("click", () => {
@@ -423,6 +449,69 @@ addBookingClose.addEventListener("click", () => {
   addBookingDialog.close();
 });
 
+removeBookingBtn.addEventListener("click", () => {
+    removeBookingDialog.showModal();
+    document.getElementById("bookings-active-user-label").innerHTML = "Existing Bookings for "+active_user.name;
+    var select = document.getElementById("user-booking-opts");
+    select.innerHTML = "";
+    for (let i=0;i<sysManager.data()[2][1].length;i++) {
+        if (active_user == admin) {
+            select.add(new Option(sysManager.data()[2][1][i]["id"]));
+        }
+        else {
+            if (sysManager.data()[2][1][i]["userID"] == active_user.id) {
+                select.add(new Option(sysManager.data()[2][1][i]["id"]));
+            }
+        }
+    }
+})
+
+deleteSelected.addEventListener("click", () => {
+    var selected = document.getElementById("user-booking-opts").value;
+    document.getElementById('table').innerHTML = emptyTableState;
+    updateTable();
+    
+    for (let i=0;i<sysManager.data()[2][1].length;i++) {
+        if (sysManager.data()[2][1][i]["id"] == selected) {
+            let toRemove = sysManager.data()[2][1][i];
+            sysManager.deleteExisting("booking", ADMIN_ID, toRemove["id"]);
+        }
+    }
+    for (let i=0;i<sysManager.data()[2][1].length;i++) {
+        thisBooking = sysManager.data()[2][1][i];
+        var treatedStart = parseInt(thisBooking.data()[3][1][0][0]+thisBooking.data()[3][1][0][1]+thisBooking.data()[3][1][0][3]);
+        var treatedEnd = parseInt(thisBooking.data()[3][1][1][0]+thisBooking.data()[3][1][1][1]+thisBooking.data()[3][1][1][3]);
+        var first = false;
+        var requestedColor = thisBooking["displayColor"];
+        for (let i=0;i<timespans.length;i++) {
+            if (timespans[i] >= treatedStart && timespans[i] <= treatedEnd) {
+                var pertinentCell = document.getElementById(String(thisBooking["classroom"]+";"+String(timespans[i])));
+                pertinentCell.style.background = requestedColor;
+                if (first == false) {
+                    pertinentCell.innerHTML = String(thisBooking["id"]+" | "+thisBooking["timespan"][0]+" - "+thisBooking["timespan"][1]);
+                    first = true;
+                }
+            }       
+        }
+    }
+
+    var select = document.getElementById("user-booking-opts");
+    select.innerHTML = "";
+    for (let i=0;i<sysManager.data()[2][1].length;i++) {
+        if (active_user == admin) {
+            select.add(new Option(sysManager.data()[2][1][i]["id"]));
+        }
+        else {
+            if (sysManager.data()[2][1][i]["userID"] == active_user.id) {
+                select.add(new Option(sysManager.data()[2][1][i]["id"]));
+            }
+        }
+    }
+});
+
+removeDoneBtn.addEventListener("click", () => {
+    removeBookingDialog.close();
+})
 
 finishAddBooking.addEventListener("click", () => {
     var eventTitle = document.getElementById("input-event-title").value;
@@ -446,7 +535,7 @@ finishAddBooking.addEventListener("click", () => {
     }
 
     if (ready) {
-        var thisBooking = new Booking(eventTitle, eventTitle, selectedClassroom, timespan, ADMIN_ID, sysManager);
+        var thisBooking = new Booking(eventTitle, eventTitle, selectedClassroom, timespan, active_user.id, sysManager, requestedColor);
         var success = sysManager.addToExisting("booking", ADMIN_ID, thisBooking);
         if (success == 1) {
             var treatedStart = parseInt(thisBooking.data()[3][1][0][0]+thisBooking.data()[3][1][0][1]+thisBooking.data()[3][1][0][3]);
