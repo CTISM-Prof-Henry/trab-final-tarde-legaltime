@@ -9,7 +9,42 @@
 <body>
     <div id="toolbar">
         <h3>EncontraSala</h3>
-        <button>Admin Panel</button>
+        <button id="admin-panel-button">Admin Panel</button>
+        <dialog id="admin-panel">
+                    <div id="dialog-display-div-3">
+                        <div>
+                            <header>
+                                <h3>Admin Panel</h3>
+                            </header>
+                        </div>
+                    </div>
+                    <div id="div-set-as-separate-cols">
+                        <div>
+                            <p>Add User</p>
+                            <div id="inline-thing">
+                                <input type="text" id="input-user-to-add">
+                                <button id="add-user-button">Add</button>
+                            </div>
+                            <p>Add Classroom</p>
+                            <div id="inline-thing">
+                                <input type="text" id="input-classroom-to-add">
+                                <button id="add-classroom-button">Add</button>
+                            </div>
+                        </div>
+                        <div>
+                            <p>Remove User</p>
+                            <div id="inline-thing">
+                                <select id="user-remove-opts"></select>
+                                <button id="remove-user-button">Remove</button>
+                            </div>
+                            <p>Remove Classroom</p>
+                            <div id="inline-thing">
+                                <select id="classroom-remove-opts"></select>
+                                <button id="remove-classroom-button">Remove</button>
+                            </div>
+                        </div>
+                    </div>
+                </dialog>
     </div>
     <div id="main-container">
         <div id="table-actions-container">
@@ -51,18 +86,20 @@
                 </dialog>
                 <button id="remove-booking-btn" class="table-act-button">Remove Bookings</button>
                 <dialog id="remove-booking-dialog">
-                    <div id="dialog-display-div">
+                    <div id="dialog-display-div-2">
                         <div>
                             <header>
                                 <h3>Remove Bookings</h3>
                             </header>
                             <div>
                                 <p id="bookings-active-user-label">Existing Bookings for </p>
-                                <select id="user-booking-opts">
-                                </select>
-                                <button id="delete-selected-booking">Delete</button>
+                                <div id="deletion-box">
+                                    <select id="user-booking-opts">
+                                    </select>
+                                    <button id="delete-selected-booking">Delete</button>
+                                </div>
                             </div>
-                            <div id="button-row">
+                            <div id="button-row-2">
                                 <button id="remove-booking-done-btn">Done</button>
                             </div>
                         </div>
