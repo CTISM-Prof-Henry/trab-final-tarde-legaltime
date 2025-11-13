@@ -1,5 +1,5 @@
 
-const ADMIN_ID = "#00001";
+const ADMIN_ID = "admin";
 var active_user = null // application starts with admin
 
 // timespans need to be passed when creating SysManager object
@@ -40,7 +40,7 @@ class SysManager {
                         alreadyIn = true;
                     }
                 }
-                if (alreadyIn == false) {
+                if (alreadyIn == false && target.data()[0][1] != "") {
                     this.existingUsers = this.existingUsers.concat([target]);
                 }
                 else {
@@ -327,6 +327,7 @@ function updateTable() { // fix later: everytime this method is called, headers 
 
 function updateBookingOpts() {
     var select = document.getElementById("classroom-book-opts");
+    select.innerHTML = "";
 
     for (let i=0;i<sysManager.data()[4][1].length;i++) {
         select.add(new Option(sysManager.data()[4][1][i]["id"]));
@@ -359,8 +360,27 @@ function selectedUser() {
 
 function addUserOpts() {
     var select = document.getElementById("user-button");
+    select.innerHTML = "";
     for (let i=0;i<sysManager.data()[3][1].length;i++) {
         select.add(new Option(sysManager.data()[3][1][i]["name"]));
+    }
+}
+
+function updateAdminRemovalOpts() {
+    var select1 = document.getElementById("user-remove-opts");
+    var select2 = document.getElementById("classroom-remove-opts");
+
+    select1.innerHTML = "";
+    select2.innerHTML = "";
+
+    for (let i=0;i<sysManager.data()[3][1].length;i++) {
+        if (sysManager.data()[3][1][i]["name"] != "admin") {
+            select1.add(new Option(sysManager.data()[3][1][i]["name"]));
+        }
+    }
+
+    for (let i=0;i<sysManager.data()[4][1].length;i++) {
+        select2.add(new Option(sysManager.data()[4][1][i]["id"]));
     }
 }
 
@@ -414,19 +434,20 @@ document.addEventListener("DOMContentLoaded", function () {
     updateBookingOpts();
 });
 
-
 // interactivity
 
 document.getElementById("reset-button").addEventListener("click", () => {
     if (active_user == admin) {
-        let temp = sysManager.data()[2][1];
-        console.log(temp);
-        for (let i=0;i<temp.length+1;i++) {
+        while (sysManager.data()[2][1].length != 0) {
             sysManager.deleteExisting("booking", ADMIN_ID, sysManager.data()[2][1][0]["id"]);
         }
 
         document.getElementById('table').innerHTML = emptyTableState;
         updateTable();
+    }
+
+    else {
+        alert("User must be admin to use this option.");
     }
 });
 
@@ -439,6 +460,116 @@ const removeDoneBtn = document.getElementById("remove-booking-done-btn");
 const finishAddBooking = document.getElementById("add-booking-finish-btn");
 const userSelect = document.getElementById("user-button");
 const deleteSelected = document.getElementById("delete-selected-booking");
+const adminPanelBtn = document.getElementById("admin-panel-button");
+const adminPanel = document.getElementById("admin-panel");
+
+adminPanelBtn.addEventListener("click", () => {
+    let password = prompt("Enter password for ADMIN", "");
+    if (password == "admin") {
+        adminPanel.showModal();
+        updateAdminRemovalOpts();
+    }
+});
+
+document.getElementById("remove-user-button").addEventListener("click", () => {
+    var userToRemove = document.getElementById("user-remove-opts").value;
+    var hasBooking = false;
+    for (let i=0;i<sysManager.data()[2][1].length;i++) {
+        if (sysManager.data()[2][1][i]["userID"] == userToRemove) {
+            hasBooking = true;
+        }
+    }
+    
+    if (hasBooking) {
+        alert("Cannot delete user "+userToRemove+": user has bookings.");
+    }
+    else {
+        sysManager.deleteExisting("user", ADMIN_ID, userToRemove);
+        addUserOpts();
+        updateAdminRemovalOpts();
+        active_user = sysManager.data()[3][1][sysManager.data()[3][1].length-1];
+    }
+});
+
+document.getElementById("add-user-button").addEventListener("click", () => {
+    var userToAdd = document.getElementById("input-user-to-add").value;
+    var thisUser = new User(userToAdd, userToAdd, "none", sysManager);
+    sysManager.addToExisting("user", ADMIN_ID, thisUser);
+    addUserOpts();
+    updateAdminRemovalOpts();
+});
+
+document.getElementById("add-classroom-button").addEventListener("click", () => {
+    var classroomToAdd = document.getElementById("input-classroom-to-add").value;
+    var thisClassroom = new Classroom(classroomToAdd, 999, "none", [], sysManager);
+    sysManager.addToExisting("classroom", ADMIN_ID, thisClassroom);
+    document.getElementById('table').innerHTML = emptyTableState;
+    updateTable();
+    updateBookingOpts();
+    updateAdminRemovalOpts();
+
+    for (let i=0;i<sysManager.data()[2][1].length;i++) {
+        thisBooking = sysManager.data()[2][1][i];
+        var treatedStart = parseInt(thisBooking.data()[3][1][0][0]+thisBooking.data()[3][1][0][1]+thisBooking.data()[3][1][0][3]);
+        var treatedEnd = parseInt(thisBooking.data()[3][1][1][0]+thisBooking.data()[3][1][1][1]+thisBooking.data()[3][1][1][3]);
+        var first = false;
+        var requestedColor = thisBooking["displayColor"];
+        for (let i=0;i<timespans.length;i++) {
+            if (timespans[i] >= treatedStart && timespans[i] <= treatedEnd) {
+                var pertinentCell = document.getElementById(String(thisBooking["classroom"]+";"+String(timespans[i])));
+                pertinentCell.style.background = requestedColor;
+                if (first == false) {
+                    pertinentCell.innerHTML = String(thisBooking["id"]+" | "+thisBooking["timespan"][0]+" - "+thisBooking["timespan"][1]+" | "+thisBooking.data()[4][1]);
+                    first = true;
+                }
+            }       
+        }
+    }
+});
+
+document.getElementById("remove-classroom-button").addEventListener("click", () => {
+    var classroomToRemove = document.getElementById("classroom-remove-opts").value;
+    var hasBooking = false;
+
+    for (let i=0;i<sysManager.data()[2][1].length;i++) {
+        if (sysManager.data()[4][1][i]["id"] == classroomToRemove) {
+            if (sysManager.data()[4][1][i]["usageTimes"].length>0) { 
+                hasBooking = true;
+            }
+        }
+    }
+    
+    if (hasBooking) {
+        alert("Cannot delete classroom "+classroomToRemove+": classroom has bookings.");
+    }
+    else {
+        sysManager.deleteExisting("classroom", ADMIN_ID, classroomToRemove);
+        document.getElementById('table').innerHTML = emptyTableState;
+        updateTable();
+        updateBookingOpts();
+        updateAdminRemovalOpts();
+
+        for (let i=0;i<sysManager.data()[2][1].length;i++) {
+            thisBooking = sysManager.data()[2][1][i];
+            var treatedStart = parseInt(thisBooking.data()[3][1][0][0]+thisBooking.data()[3][1][0][1]+thisBooking.data()[3][1][0][3]);
+            var treatedEnd = parseInt(thisBooking.data()[3][1][1][0]+thisBooking.data()[3][1][1][1]+thisBooking.data()[3][1][1][3]);
+            var first = false;
+            var requestedColor = thisBooking["displayColor"];
+            for (let i=0;i<timespans.length;i++) {
+                if (timespans[i] >= treatedStart && timespans[i] <= treatedEnd) {
+                    var pertinentCell = document.getElementById(String(thisBooking["classroom"]+";"+String(timespans[i])));
+                    pertinentCell.style.background = requestedColor;
+                    if (first == false) {
+                        pertinentCell.innerHTML = String(thisBooking["id"]+" | "+thisBooking["timespan"][0]+" - "+thisBooking["timespan"][1]+" | "+thisBooking.data()[4][1]);
+                        first = true;
+                    }
+                }       
+            }
+        }
+    }
+});
+
+
 
 
 addBookingBtn.addEventListener("click", () => {
@@ -546,11 +677,18 @@ finishAddBooking.addEventListener("click", () => {
                     var pertinentCell = document.getElementById(String(selectedClassroom+";"+String(timespans[i])));
                     pertinentCell.style.background = requestedColor;
                     if (first == false) {
-                        pertinentCell.innerHTML = String(eventTitle+" | "+startTime+" - "+endTime);
+                        pertinentCell.innerHTML = String(eventTitle+" | "+startTime+" - "+endTime+" | "+thisBooking.data()[4][1]);
                         first = true;
                     }
                 }
             }
         }
+        else {
+            alert("Title or timespan for chosen classroom already in use!");
+        }
+    }
+
+    else {
+        alert("Please enter a valid timespan and/or a unique title.");
     }
   });
