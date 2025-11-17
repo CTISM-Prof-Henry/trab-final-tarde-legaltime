@@ -11,14 +11,14 @@
         "qunit": "^2.24.1"
     },
     "scripts": {
-        "test": "nyc qunit \"website/static/js/test/**/*.js\""
+        "test": "nyc qunit \"app/js/test/**/*.js\""
     },
     "nyc": {
         "require": ["@babel/register"],
         "babel": true,
         "reporter": ["text", "html"],
-        "include": ["website/static/js/src/**/*.js"],
-        "exclude": ["website/static/js/test/**/*.js"],
+        "include": ["app/js/*.js"],
+        "exclude": ["app/js/test/*.js"],
         "all": true,
         "extension": [".js"]
     }
