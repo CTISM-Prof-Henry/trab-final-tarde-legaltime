@@ -1,0 +1,24 @@
+name: Executa testes com QUnit
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  run-tests:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Clona o repositório
+        uses: actions/checkout@v5
+
+      - name: Configura o Node.js (versão LTS)
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Instala dependências do projeto
+        run: npm ci
+
+      - name: Executa os testes com cobertura
+        run: npm test
