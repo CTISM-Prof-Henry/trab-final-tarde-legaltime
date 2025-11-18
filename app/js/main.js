@@ -233,11 +233,12 @@ class SysManager {
 
 
 class User {
-    constructor(id, name, dept, sysManager) {
+    constructor(id, name, dept, sysManager, password="") {
         this.id = id;
         this.name = name;
         this.dept = dept;
         this.sysManager = sysManager;
+        this.password = password;
     }
     
     data() {
@@ -252,6 +253,7 @@ class User {
         yield ["id", this.id];
         yield ["name", this.name];
         yield ["dept", this.dept];
+        yield ["password", this.password];
     } 
     
 }
@@ -351,12 +353,30 @@ function updateBookingOpts() {
 }
 
 function selectedUser() {
-    for (let i=0;i<sysManager.data()[3][1].length;i++) {
-        if (sysManager.data()[3][1][i]["name"] == document.getElementById("user-button").value) {
-            active_user = sysManager.data()[3][1][i];
+    document.getElementById("user-select-password-request").showModal();
+    document.getElementById("ok-user-pass-btn").addEventListener("click", () => {
+        for (let i=0;i<sysManager.data()[3][1].length;i++) {
+            if (sysManager.data()[3][1][i]["name"] == document.getElementById("user-button").value) {
+                targetUser = sysManager.data()[3][1][i];
+            }
         }
-    }
+        if (document.getElementById("input-user-password").value == targetUser["password"]) {
+            active_user = targetUser;
+            document.getElementById("user-button").value = active_user["id"];
+            document.getElementById("user-select-password-request").close();
+        }
+        else {
+            document.getElementById("user-button").value = active_user["id"];
+            document.getElementById("user-select-password-request").close();
+        }
+    });
 }
+
+document.getElementById("user-select-password-request").addEventListener('keydown', (event) => {
+        if (event.key === 'Escape') {
+            event.preventDefault();
+        }
+    });
 
 function addUserOpts() {
     var select = document.getElementById("user-button");
@@ -364,6 +384,7 @@ function addUserOpts() {
     for (let i=0;i<sysManager.data()[3][1].length;i++) {
         select.add(new Option(sysManager.data()[3][1][i]["name"]));
     }
+    document.getElementById("user-button").value = active_user["id"];
 }
 
 function updateAdminRemovalOpts() {
@@ -411,22 +432,22 @@ let emptyTableState = document.getElementById("table").innerHTML;
 let sysManager = new SysManager([], timespans, [], [], []);
 console.log("created sysManager: ", sysManager.data());
 
-let classroom1 = new Classroom("SALA G203", 12, "math", [], sysManager);
+let classroom1 = new Classroom("DEFAULT CLASSROOM 1", 12, "math", [], sysManager);
 sysManager.addToExisting("classroom", ADMIN_ID, classroom1);
 
-let classroom2 = new Classroom("SALA F402", 24, "math", [], sysManager);
+let classroom2 = new Classroom("DEFAULT CLASSROOM 2", 24, "math", [], sysManager);
 sysManager.addToExisting("classroom", ADMIN_ID, classroom2);
 
-let classroom3 = new Classroom("SALA PROJETOR", 50, "math", [], sysManager);
+let classroom3 = new Classroom("DEFAULT CLASSROOM 3", 50, "math", [], sysManager);
 sysManager.addToExisting("classroom", ADMIN_ID, classroom3);
 
-let admin = new User(ADMIN_ID, "admin", "none", sysManager);
+let admin = new User(ADMIN_ID, "admin", "none", sysManager, "admin");
 sysManager.addToExisting("user", ADMIN_ID, admin);
 
-active_user = admin;
+let test = new User("test", "test", "none", sysManager, "admin");
+sysManager.addToExisting("user", ADMIN_ID, test);
 
-let testUser = new User("test", "test", "test user", sysManager);
-sysManager.addToExisting("user", ADMIN_ID, testUser);
+active_user = admin;
 
 document.addEventListener("DOMContentLoaded", function () {
     addUserOpts();
@@ -464,8 +485,14 @@ const adminPanelBtn = document.getElementById("admin-panel-button");
 const adminPanel = document.getElementById("admin-panel");
 
 adminPanelBtn.addEventListener("click", () => {
-    let password = prompt("Enter password for ADMIN", "");
-    if (password == "admin") {
+    document.getElementById("admin-panel-password-request").showModal();
+});
+
+document.getElementById("ok-admin-pass-btn").addEventListener("click", () => {
+    let password = document.getElementById("input-admin-password").value;
+    if (password == admin["password"]) {
+        document.getElementById("input-admin-password").value = "";
+        document.getElementById("admin-panel-password-request").close();
         adminPanel.showModal();
         updateAdminRemovalOpts();
     }
@@ -485,15 +512,18 @@ document.getElementById("remove-user-button").addEventListener("click", () => {
     }
     else {
         sysManager.deleteExisting("user", ADMIN_ID, userToRemove);
+        active_user = sysManager.data()[3][1][sysManager.data()[3][1].length-1];
         addUserOpts();
         updateAdminRemovalOpts();
-        active_user = sysManager.data()[3][1][sysManager.data()[3][1].length-1];
     }
 });
 
 document.getElementById("add-user-button").addEventListener("click", () => {
     var userToAdd = document.getElementById("input-user-to-add").value;
-    var thisUser = new User(userToAdd, userToAdd, "none", sysManager);
+    var password = document.getElementById("password-user-to-add").value;
+    var thisUser = new User(userToAdd, userToAdd, "none", sysManager, password);
+    var userToAdd = document.getElementById("input-user-to-add").value = "";
+    var password = document.getElementById("password-user-to-add").value = "";
     sysManager.addToExisting("user", ADMIN_ID, thisUser);
     addUserOpts();
     updateAdminRemovalOpts();
@@ -501,28 +531,30 @@ document.getElementById("add-user-button").addEventListener("click", () => {
 
 document.getElementById("add-classroom-button").addEventListener("click", () => {
     var classroomToAdd = document.getElementById("input-classroom-to-add").value;
-    var thisClassroom = new Classroom(classroomToAdd, 999, "none", [], sysManager);
-    sysManager.addToExisting("classroom", ADMIN_ID, thisClassroom);
-    document.getElementById('table').innerHTML = emptyTableState;
-    updateTable();
-    updateBookingOpts();
-    updateAdminRemovalOpts();
-
-    for (let i=0;i<sysManager.data()[2][1].length;i++) {
-        thisBooking = sysManager.data()[2][1][i];
-        var treatedStart = parseInt(thisBooking.data()[3][1][0][0]+thisBooking.data()[3][1][0][1]+thisBooking.data()[3][1][0][3]);
-        var treatedEnd = parseInt(thisBooking.data()[3][1][1][0]+thisBooking.data()[3][1][1][1]+thisBooking.data()[3][1][1][3]);
-        var first = false;
-        var requestedColor = thisBooking["displayColor"];
-        for (let i=0;i<timespans.length;i++) {
-            if (timespans[i] >= treatedStart && timespans[i] <= treatedEnd) {
-                var pertinentCell = document.getElementById(String(thisBooking["classroom"]+";"+String(timespans[i])));
-                pertinentCell.style.background = requestedColor;
-                if (first == false) {
-                    pertinentCell.innerHTML = String(thisBooking["id"]+" | "+thisBooking["timespan"][0]+" - "+thisBooking["timespan"][1]+" | "+thisBooking.data()[4][1]);
-                    first = true;
-                }
-            }       
+    if (classroomToAdd != "") {
+        var thisClassroom = new Classroom(classroomToAdd, 999, "none", [], sysManager);
+        sysManager.addToExisting("classroom", ADMIN_ID, thisClassroom);
+        document.getElementById('table').innerHTML = emptyTableState;
+        updateTable();
+        updateBookingOpts();
+        updateAdminRemovalOpts();
+    
+        for (let i=0;i<sysManager.data()[2][1].length;i++) {
+            thisBooking = sysManager.data()[2][1][i];
+            var treatedStart = parseInt(thisBooking.data()[3][1][0][0]+thisBooking.data()[3][1][0][1]+thisBooking.data()[3][1][0][3]);
+            var treatedEnd = parseInt(thisBooking.data()[3][1][1][0]+thisBooking.data()[3][1][1][1]+thisBooking.data()[3][1][1][3]);
+            var first = false;
+            var requestedColor = thisBooking["displayColor"];
+            for (let i=0;i<timespans.length;i++) {
+                if (timespans[i] >= treatedStart && timespans[i] <= treatedEnd) {
+                    var pertinentCell = document.getElementById(String(thisBooking["classroom"]+";"+String(timespans[i])));
+                    pertinentCell.style.background = requestedColor;
+                    if (first == false) {
+                        pertinentCell.innerHTML = String(thisBooking["id"]+" | "+thisBooking["timespan"][0]+" - "+thisBooking["timespan"][1]+" | "+thisBooking.data()[4][1]);
+                        first = true;
+                    }
+                }       
+            }
         }
     }
 });
@@ -568,8 +600,6 @@ document.getElementById("remove-classroom-button").addEventListener("click", () 
         }
     }
 });
-
-
 
 
 addBookingBtn.addEventListener("click", () => {
