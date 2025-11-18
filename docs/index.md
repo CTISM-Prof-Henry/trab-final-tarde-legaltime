@@ -15,9 +15,9 @@ git clone https://github.com/CTISM-Prof-Henry/trab-final-tarde-legaltime/
 ```
 1B) Alternativamente, baixar o arquivo *zip* do software disponível no [repositório](https://github.com/CTISM-Prof-Henry/trab-final-tarde-legaltime/).
 
-2) Abrir o arquivo *index.html*:
+2) Abrir o prompt de comando (dentro da pasta onde figura o diretório do repositório) e executar o comando:
 ```
-start ./dir/trab-final-tarde-legaltime/app/html/index.html 
+start trab-final-tarde-legaltime-main/app/html/index.html
 ```
 
 ## Como Usar
@@ -44,3 +44,4 @@ Diversas ações dentro de *EncontraSala* possuem restrições específicas.
 2. A remoção e adição de salas é uma funcionalidade restrita ao administrador.
 
 3. A remoção de uma sala só é exequível caso não existam agendamentos ligados a ela.
+
