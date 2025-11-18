@@ -263,13 +263,22 @@ form {
 #div-set-as-separate-cols {
     display: flex;
     flex-direction: row;
-    justify-content: space-around;
-    align-items: center;
-    padding: 10%;
+    justify-content: space-evenly;
+    align-items: flex-start;
+    padding: 5%;
+}
+
+#div-set-as-separate-cols div { 
+    padding: 5px;
+    padding-bottom: 20px;
 }
 
 #div-set-as-separate-cols button {
-    margin-left: 5px;
+    margin-left: 10px;
+}
+
+#div-set-as-separate-cols input {
+    padding: 5px;
 }
 
 #inline-thing {
