@@ -649,7 +649,7 @@ deleteSelected.addEventListener("click", () => {
                 var pertinentCell = document.getElementById(String(thisBooking["classroom"]+";"+String(timespans[i])));
                 pertinentCell.style.background = requestedColor;
                 if (first == false) {
-                    pertinentCell.innerHTML = String(thisBooking["id"]+" | "+thisBooking["timespan"][0]+" - "+thisBooking["timespan"][1]);
+                    pertinentCell.innerHTML = String(thisBooking["id"]+" | "+thisBooking["timespan"][0]+" - "+thisBooking["timespan"][1]+" | "+thisBooking.data()[4][1]);
                     first = true;
                 }
             }       
