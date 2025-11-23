@@ -45,3 +45,6 @@ Diversas ações dentro de *EncontraSala* possuem restrições específicas.
 
 3. A remoção de uma sala só é exequível caso não existam agendamentos ligados a ela.
 
+4. A remoção de um usuário só é exequível caso não existam agendamentos feitos por ele. 
+
+
