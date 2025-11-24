@@ -29,6 +29,8 @@ Administradores, além de gozarem de todas as funcionalidades dos usuários comu
 
 Para qualquer tipo de usuário, a **criação** de um agendamento parte do botão "Criar", que disponibiliza uma janela onde se deve entrar com as informações do agendamento. Ainda, para todo agendamento existente na tabela, um clique sobre ele levantará a opção de **remoção**.
 
+Convém pontuar que a ausência de um sistema de datas é intencional, pois este software é voltado para o controle diário de agendamentos.
+
 ### Administrando o Sistema
 O administrador dispõe, acrescendo às atribuições comuns a qualquer tipo de usuário, de funcionalidades mais sensíveis, como **adição e remoção de usuários** e **adição e remoção de salas**.
 
@@ -46,5 +48,6 @@ Diversas ações dentro de *EncontraSala* possuem restrições específicas.
 3. A remoção de uma sala só é exequível caso não existam agendamentos ligados a ela.
 
 4. A remoção de um usuário só é exequível caso não existam agendamentos feitos por ele. 
+
 
 
