@@ -12,6 +12,10 @@ Software baseado em web de página singular que auxilia no gerenciamento da aloc
 <li>Cadastro e remoção de salas.
 </ul>
 
+## Tecnologias Utilizadas
+
+O projeto foi construído usando HTML5, CSS3 e JavaScript.
+
 ## Sobre
 
 Informações acerca de pré-requisitos, instalação e utilização podem ser encontradas na [Documentação](http://ctism-prof-henry.github.io/trab-final-tarde-legaltime/).
